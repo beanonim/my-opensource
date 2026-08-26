@@ -1,46 +1,31 @@
 #!/usr/bin/env python3
 """
 AGENT MULTI-LAUNCHER
-Functions: FunPay, OSINT (4 mirrors), Telegram Tools, VPN Parser
 """
 
 import os
 import sys
 import subprocess
-from pathlib import Path
 import platform
 import requests
 import importlib
 
 REPO_URL = "https://github.com/beanonim/my-opensource.git"
 REPO_DIR = "my-opensource"
+MAIN_DIR = os.path.join(REPO_DIR, "my-opensource-main")
 
-FUNPAY_PATH = os.path.join(REPO_DIR, "FunPayCortex-main", "cortex.py")
-OSINT_MIRRORS = {
-    "1": os.path.join(REPO_DIR, "hate", "main.py"),
-    "2": os.path.join(REPO_DIR, "lightwave", "main.py"),
-    "3": os.path.join(REPO_DIR, "nihilist", "main.py"),
-    "4": os.path.join(REPO_DIR, "versus", "main.py"),
+FUNPAY_PATH = os.path.join(MAIN_DIR, "agent funpay", "cortex.py")
+AGENT_PATHS = {
+    "1": os.path.join(MAIN_DIR, "agent 1", "main.py"),
+    "2": os.path.join(MAIN_DIR, "agent 2", "main.py"),
+    "3": os.path.join(MAIN_DIR, "agent 3", "main.py"),
+    "4": os.path.join(MAIN_DIR, "agent 4", "main.py"),
 }
 TELEGRAM_SCRIPTS = {
-    "funstat": os.path.join(REPO_DIR, "funstatfarm.py"),
-    "gift": os.path.join(REPO_DIR, "giftsend.py"),
-    "manager": os.path.join(REPO_DIR, "manager.py"),
+    "funstat": os.path.join(MAIN_DIR, "agent startfarm.py"),
+    "gift": os.path.join(MAIN_DIR, "giftsend.py"),
+    "manager": os.path.join(MAIN_DIR, "manager.py"),
 }
-VPN_REPOS = [
-    "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/BLACK_VLESS_RUS_mobile.txt",
-    "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/WHITE-CIDR-RU-checked.txt",
-    "https://raw.githubusercontent.com/AvenCores/goida-vpn-configs/refs/heads/main/githubmirror/6.txt",
-    "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vless.txt",
-    "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vless.txt",
-]
-
-ALL_REQUIREMENTS = [
-    "pyrogram", "telethon", "aiohttp", "requests",
-    "colorama", "rich", "cryptography", "pysocks",
-    "python-dotenv", "sqlalchemy", "beautifulsoup4",
-    "lxml", "selenium", "fake-useragent", "pyyaml"
-]
 
 AGENT_BANNER = """
 ╔══════════════════════════════════════════════════════════════════╗
@@ -52,7 +37,7 @@ AGENT_BANNER = """
 ║  ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║                      ║
 ║  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝                      ║
 ║                                                                  ║
-║              AGENT MULTI-LAUNCHER v1.0                           ║
+║              AGENT MULTI-LAUNCHER v3.0                           ║
 ║                                                                  ║
 ╚══════════════════════════════════════════════════════════════════╝
 """
@@ -66,25 +51,8 @@ def print_banner():
     print(" [1] 🔥 AGENT FunPay Cortex")
     print(" [2] 🕵️ AGENT OSINT Suite (4 Mirrors)")
     print(" [3] 📱 AGENT Telegram Tools")
-    print(" [4] 🌐 AGENT VPN Parser")
     print(" [0] ❌ Exit AGENT")
     print("=" * 60)
-
-def install_all_modules():
-    print("\n[AGENT] Installing all required modules...")
-    for module in ALL_REQUIREMENTS:
-        try:
-            importlib.import_module(module)
-            print(f"[AGENT] ✅ {module} already installed")
-        except ImportError:
-            print(f"[AGENT] 📦 Installing {module}...")
-            try:
-                subprocess.check_call([sys.executable, "-m", "pip", "install", module])
-                print(f"[AGENT] ✅ {module} installed")
-            except:
-                print(f"[AGENT] ❌ Failed to install {module}")
-    
-    print("\n[AGENT] All modules installed!")
 
 def install_requirements_file(req_file):
     if os.path.exists(req_file):
@@ -125,25 +93,26 @@ def run_script(script_path, args=None):
 
 def run_funpay():
     print("\n[AGENT] Starting FunPay Cortex...")
-    if os.path.exists(os.path.join(REPO_DIR, "FunPayCortex-main")):
-        req_file = os.path.join(REPO_DIR, "FunPayCortex-main", "requirements.txt")
+    funpay_dir = os.path.join(MAIN_DIR, "agent funpay")
+    if os.path.exists(funpay_dir):
+        req_file = os.path.join(funpay_dir, "requirements.txt")
         install_requirements_file(req_file)
         run_script(FUNPAY_PATH)
     else:
-        print("[AGENT] FunPayCortex-main not found in repository!")
+        print("[AGENT] agent funpay not found!")
 
 def run_osint_mirror():
-    print("\n[AGENT] OSINT Suite - Select Mirror:")
-    for key, path in OSINT_MIRRORS.items():
+    print("\n[AGENT] OSINT Suite - Select Agent:")
+    for key, path in AGENT_PATHS.items():
         status = "✅" if os.path.exists(path) else "❌"
-        mirror_name = os.path.basename(os.path.dirname(path))
-        print(f" [{key}] {status} AGENT {mirror_name}")
+        agent_name = os.path.basename(os.path.dirname(path))
+        print(f" [{key}] {status} AGENT {agent_name}")
     
-    choice = input("\n[AGENT] Select mirror (1-4): ").strip()
-    if choice in OSINT_MIRRORS:
-        script_path = OSINT_MIRRORS[choice]
-        mirror_dir = os.path.dirname(script_path)
-        req_file = os.path.join(mirror_dir, "requirements.txt")
+    choice = input("\n[AGENT] Select agent (1-4): ").strip()
+    if choice in AGENT_PATHS:
+        script_path = AGENT_PATHS[choice]
+        agent_dir = os.path.dirname(script_path)
+        req_file = os.path.join(agent_dir, "requirements.txt")
         install_requirements_file(req_file)
         run_script(script_path)
     else:
@@ -170,38 +139,14 @@ def run_telegram_tools():
     else:
         print("[AGENT] Invalid choice!")
 
-def run_vpn_parser():
-    print("\n[AGENT] VPN Config Parser")
-    print(f"[AGENT] Found {len(VPN_REPOS)} sources")
-    
-    output_dir = os.path.join(REPO_DIR, "vpn_configs")
-    os.makedirs(output_dir, exist_ok=True)
-    
-    for i, url in enumerate(VPN_REPOS, 1):
-        print(f"[AGENT] [{i}/{len(VPN_REPOS)}] Downloading: {url.split('/')[-1]}")
-        try:
-            response = requests.get(url, timeout=10)
-            if response.status_code == 200:
-                filename = os.path.join(output_dir, f"config_{i}.txt")
-                with open(filename, 'w', encoding='utf-8') as f:
-                    f.write(response.text)
-                print(f"  [AGENT] Saved: {filename}")
-            else:
-                print(f"  [AGENT] Status: {response.status_code}")
-        except Exception as e:
-            print(f"  [AGENT] Error: {e}")
-    
-    print(f"\n[AGENT] VPN configs saved to: {output_dir}")
-
 def main():
     if not os.path.exists(REPO_DIR):
         print("[AGENT] First run detected. Setting up...")
-        install_all_modules()
         clone_or_update_repo()
     
     while True:
         print_banner()
-        choice = input("[AGENT] Select function (0-4): ").strip()
+        choice = input("[AGENT] Select function (0-3): ").strip()
         
         if choice == "1":
             run_funpay()
@@ -209,8 +154,6 @@ def main():
             run_osint_mirror()
         elif choice == "3":
             run_telegram_tools()
-        elif choice == "4":
-            run_vpn_parser()
         elif choice == "0":
             print("[AGENT] Goodbye!")
             break
