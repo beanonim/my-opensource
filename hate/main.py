@@ -104,9 +104,9 @@ def main():
                 p(f"  {api['name']} - {api_id}")
                 p(f"  bases : {api['bases']} TB")
                 p("  ──────")
-            p(f"""Сделано с любовью от @ILoveSocmint, @hatedfame
-Баннер, база софта сделана: @hatedfame
-Софт под защитой: @PushokGuard
+            p(f"""Сделано с любовью от @netwith
+Баннер, база софта сделана: @netwith
+Софт под защитой: @netwith
 
 Информация и пользователе:
 - Ник: {username}
