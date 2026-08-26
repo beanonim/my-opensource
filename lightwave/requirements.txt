@@ -1,0 +1,9 @@
+requests
+phonenumbers
+rich
+colorama
+selenium
+telethon
+leakcheck
+beautifulsoup4
+faker
